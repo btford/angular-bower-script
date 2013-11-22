@@ -1,6 +1,6 @@
 # Angular Bower Script
 
-**WORK IN PROGRESS, NO NOT USE YET PROBABLY**
+**WORK IN PROGRESS, DO NOT USE YET PROBABLY**
 
 Script for updating the Angular bower repos from a code.angularjs.org package
 
@@ -9,7 +9,7 @@ Requires `node` (for parsing `bower.json`) and `wget` (for fetching the `angular
 
 ## Instructions
 
-You need to run `./init.sh` the first time you use this script to clone all the gir repos.
+You need to run `./init.sh` the first time you use this script to clone all the repos.
 
 For subsequent updates:
 
