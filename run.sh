@@ -26,20 +26,14 @@ REPOS=(
   angular-touch     \
 )
 
-#
-# get the old version number
-#
-
-OLD_VERSION=`node -e "console.log(require('./bower-angular/bower').version)"`
 
 #
 # download and unzip the file
 #
 
-wget ZIP_FILE_URL && \
-  unzip ZIP_FILE -d ZIP_DIR
+#wget $ZIP_FILE_URL
+unzip $ZIP_FILE
 
-exit
 
 #
 # move the files from the zip
@@ -47,25 +41,45 @@ exit
 
 for repo in "${REPOS[@]}"
 do
-  mv ZIP_DIR/$repo* bower-$repo/
+  if [ -f $ZIP_DIR/$repo.js ] # ignore i18l
+    then
+      cd bower-$repo
+      git checkout master
+      git reset --hard HEAD
+      cd ..
+      mv $ZIP_DIR/$repo.* bower-$repo/
+  fi
 done
 
 # move i18n files
+mv $ZIP_DIR/i18n/*.js bower-angular-i18n/
 
+# move csp.css
+mv $ZIP_DIR/angular-csp.css bower-angular
+
+
+#
+# get the old version number
+#
+
+OLD_VERSION=$(node -e "console.log(require('./bower-angular/bower').version)" | sed -e 's/\r//g')
+echo $OLD_VERSION
+echo $NEW_VERSION
 
 #
 # update bower.json
 # tag each repo
 #
 
-for i in "${REPOS[@]}"
+for repo in "${REPOS[@]}"
 do
-  cd bower-$i
-  sed -i 's/$OLD_VERSION/$NEW_VERSION/g' bower.json
-  git checkout master
+  cd bower-$repo
+  pwd
+  sed -i '' -e "s/$OLD_VERSION/$NEW_VERSION/g" bower.json
   git add -A
   git commit -m "v$NEW_VERSION"
   git tag v$NEW_VERSION
   git push origin master
   git push origin v$NEW_VERSION
+  cd ..
 done
